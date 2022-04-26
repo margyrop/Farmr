@@ -165,6 +165,10 @@
   cursor: pointer;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .footer {
   height: 100px;
   background-color: #0e1e40;
@@ -172,7 +176,12 @@
   flex-direction: row;
   justify-content: space-evenly;
   align-content: center;
-  color: white;
+  bottom: 0;
+  color: #707070;
+  left: 0;
+  position: fixed;
+  font-size: small;
+  width: 100%;
 }
 
 .footer .logo {

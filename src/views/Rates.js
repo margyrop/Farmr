@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { logo_map } from '../shared/Constants';
 import Layout from '../shared/Layout';
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { SUPPLY, BORROW, ASC, DESC } from '../shared/Constants';
@@ -71,40 +72,42 @@ class Rates extends React.Component {
                                 </div>
                                 <div className="highlight-column">
                                     <h6>Pair</h6>
-                                    <div className="highlight-inner">
-                                        {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
-                                            (<div>
-                                                <div className="pair-header">
-                                                    <div style={{ width: '33%' }}>
-                                                        <img className="token-logo" src={this.state.highestYield.logo} />
-                                                        <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                    <Link to="/pair" state={{ supply: this.state.highestYield, borrow: this.state.lowestBorrowRate }}>
+                                        <div className="highlight-inner clickable">
+                                            {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
+                                                (<div>
+                                                    <div className="pair-header">
+                                                        <div style={{ width: '33%' }}>
+                                                            <img className="token-logo" src={this.state.highestYield.logo} />
+                                                            <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
+                                                        <div style={{ width: '33%' }}>
+                                                            <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
+                                                            <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
+                                                        </div>
                                                     </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
-                                                    <div style={{ width: '33%' }}>
-                                                        <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
-                                                        <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
-                                                    </div>
-                                                </div>
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className="table-label-column">Net Supply Rate</td>
-                                                            <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="table-label-column">Volatility</td>
-                                                            <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="table-label-column">Price Ratio</td>
-                                                            <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
-                                                        </tr>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td className="table-label-column">Net Supply Rate</td>
+                                                                <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className="table-label-column">Volatility</td>
+                                                                <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className="table-label-column">Price Ratio</td>
+                                                                <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
+                                                            </tr>
 
-                                                    </tbody>
-                                                </table>
-                                            </div>)
-                                        }
-                                    </div>
+                                                        </tbody>
+                                                    </table>
+                                                </div>)
+                                            }
+                                        </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -237,15 +240,15 @@ class Rates extends React.Component {
         this.setState({
             highestYield: supplyRates[0],
             lowestBorrowRate: borrowRates[0],
-        }, this.calculateBorrowvolatility);
+        }, this.calculateBorrowVolatility);
     }
 
-    calculateBorrowvolatility() {
+    calculateBorrowVolatility() {
         axios.get(`http://localhost:3001/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
-            console.log(res.data);
-            this.state.lowestBorrowRate.volatility = res.data;
+            var lowest = this.state.lowestBorrowRate;
+            lowest.volatility = res.data;
             this.setState({
-                lowestBorrowRate: { ...this.state.lowestBorrowRate }
+                lowestBorrowRate: { ...lowest }
             });
         });
     }
