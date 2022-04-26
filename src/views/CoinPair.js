@@ -1,38 +1,36 @@
 import React from "react";
 import axios from "axios";
 import Layout from '../shared/Layout';
+import { useLocation } from "react-router-dom";
 
 
+const CoinPair = () => {
 
-class CoinPair extends React.Component {
+    const location = useLocation();
+    const { supply, borrow } = location.state;
+    return (
+        <Layout>
+            <div className="page-column">
+                <div className="row-container">
+                    <div></div>
+                    <div className="highlight">
+                        <div className="row-container">
+                            <div className="highlight-inner spaced">
+                                <h6 className="highlight-item-header">{supply.asset}</h6>
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            supply: props.supply,
-            borrow: props.borrow,
-        };
+                            </div>
+                            <div className="highlight-inner spaced">
+                                <h6 className="highlight-item-header">{borrow.asset}</h6>
 
-    }
-
-    componentDidMount() {
-        
-    }
-
-    render() {
-        return (
-            <Layout>
-                <div className="page-column">
-                    <div className="highlight-container">
-                        <div className="highlight">
-                            <h6>{this.state.supply.asset}</h6>
-
+                            </div>
                         </div>
                     </div>
+                    <div></div>
                 </div>
-            </Layout>
-        );
-    }
+            </div>
+        </Layout>
+    );
+
 
 
 

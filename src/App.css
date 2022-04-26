@@ -44,6 +44,10 @@
   width: 40%;
 }
 
+.highlight-column a {
+  height: 100%;
+}
+
 .highlight-inner {
   display: flex;
   flex-direction: column;
@@ -55,6 +59,10 @@
   color: black;
   background-color: white;
   padding: 10px;
+}
+
+.spaced {
+  width: 45%;
 }
 
 .pair-header {
