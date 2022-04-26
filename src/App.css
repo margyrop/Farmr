@@ -28,14 +28,42 @@
   height: 400px;
 }
 
+.highlight-lg {
+  height: 785px;
+}
+
 .table-label-column {
   font-weight: 600;
   text-align: center;
   width: 50%;
 }
 
+.highlight-inner label {
+  width: 28%;
+  display: grid;
+  align-content: center;
+  vertical-align: middle;
+}
+
+.highlight-inner .row {
+  width: 90%;
+}
+
+.highlight-inner input {
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
 .highlight .row-container {
   height: 75%;
+}
+
+.row-container-lg {
+  height: 90% !important;
 }
 
 .highlight-column {
@@ -187,7 +215,6 @@
   bottom: 0;
   color: #707070;
   left: 0;
-  position: fixed;
   font-size: small;
   width: 100%;
 }

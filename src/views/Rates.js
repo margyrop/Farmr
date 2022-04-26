@@ -201,7 +201,6 @@ class Rates extends React.Component {
         });
         axios.get(`http://localhost:3001/supplyRates`).then(res => {
             if (res.data && res.data.length > 0) {
-                console.log(res.data);
                 var logoRates = this.mapLogos(res.data);
                 this.setState({
                     rates: logoRates,
