@@ -16,6 +16,10 @@ import USDPLogo from '../assets/coin-logos/asset_USDP.svg';
 import USDTLogo from '../assets/coin-logos/asset_USDT.svg';
 import YFILogo from '../assets/coin-logos/asset_YFI.svg';
 import ZRXLogo from '../assets/coin-logos/asset_ZRX.svg';
+export const SUPPLY = 'supply';
+export const BORROW = 'borrow';
+export const ASC = 'ASC';
+export const DESC = 'DESC';
 
 export const logo_map = [
 
