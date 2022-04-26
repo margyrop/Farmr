@@ -1,4 +1,5 @@
 import React from 'react';
+import MediaQuery from 'react-responsive';
 import { Link } from "react-router-dom";
 import GitHubLogo from '../assets/logos/GitHub.png';
 import CompoundLogo from '../assets/logos/compound-logo.svg';
@@ -24,19 +25,36 @@ class Layout extends React.Component {
                 <div className='main-body'>
                     {this.props.children}
                 </div>
-                <div className='footer'>
-                    <div className='logo'>
-                        <a target="_blank" href="http://www.github.com/margyrop"><img src={GitHubLogo}></img></a>
+                <MediaQuery query="(min-device-width: 1024px)">
+                    <div className='footer'>
+                        <div className='logo'>
+                            <a target="_blank" href="http://www.github.com/margyrop"><img src={GitHubLogo}></img></a>
+                        </div>
+                        <div>
+                            <p style={{ textAlign: "center" }}>© Farmr 2022</p>
+                            <p style={{ color: 'lightgrey' }}>Farmr© has no affiliation with Compound©</p>
+                        </div>
+
+                        <div className='logo'>
+                            <a target="_blank" href=" https://app.compound.finance/#"><img src={CompoundLogo}></img></a>
+                        </div>
                     </div>
-                    <div>
-                        <p style={{textAlign:"center"}}>© Farmr 2022</p>
-                        <p style={{color:'lightgrey'}}>Farmr© has no affiliation with Compound©</p>
+                </MediaQuery>
+                <MediaQuery query="(max-device-width: 1024px)">
+                    <div className='footer-mobile'>
+                        <div className='logo'>
+                            <a target="_blank" href="http://www.github.com/margyrop"><img className="footer-img-mobile" src={GitHubLogo}></img></a>
+                        </div>
+                        <div>
+                            <p style={{ textAlign: "center" }}>© Farmr 2022</p>
+                            <p style={{ color: 'lightgrey' }}>Farmr© has no affiliation with Compound©</p>
+                        </div>
+
+                        <div className='logo'>
+                            <a target="_blank" href=" https://app.compound.finance/#"><img className="footer-img-mobile" src={CompoundLogo}></img></a>
+                        </div>
                     </div>
-                    
-                    <div className='logo'>
-                        <a target="_blank" href=" https://app.compound.finance/#"><img src={CompoundLogo}></img></a>
-                    </div>
-                </div>
+                </MediaQuery>
             </div>);
     }
 }

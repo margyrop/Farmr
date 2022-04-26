@@ -1,4 +1,5 @@
 import React from "react";
+import MediaQuery from "react-responsive";
 import axios from "axios";
 import { logo_map } from '../shared/Constants';
 import Layout from '../shared/Layout';
@@ -24,7 +25,7 @@ class Rates extends React.Component {
     componentDidMount() {
         this.getRates();
         this.setState({
-            autoRefreshData: setInterval(this.getRates.bind(this), 10000)
+            autoRefreshData: setInterval(this.getRates.bind(this), 1000000)
         })
     }
 
@@ -33,73 +34,36 @@ class Rates extends React.Component {
             <Layout>
 
                 <div className="page-column">
-                    <div className="row-container">
-                        <div></div>
-                        <div className="highlight">
-                            <h5>Current Maximum Rate Yields</h5>
-                            <div className="row-container">
-                                <div className="highlight-column">
-                                    <h6>Outright</h6>
-                                    <div className="highlight-inner">
-                                        {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
-                                            (<div>
-                                                <div className="pair-header">
-                                                    <div>
-                                                        <img className="token-logo" src={this.state.highestYield.logo} />
-                                                        <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
-                                                    </div>
-                                                </div>
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className="table-label-column">Supply Rate</td>
-                                                            <td style={{ textAlign: 'center' }}>{(this.state.highestYield.supplyRate * 100).toFixed(2) + '%'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="table-label-column">Collateral Factor</td>
-                                                            <td style={{ textAlign: 'center' }}>{(this.state.highestYield.collateralFactor * 100).toFixed(2) + '%'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="table-label-column">Underlying Price</td>
-                                                            <td style={{ textAlign: 'center' }}>{parseFloat(this.state.highestYield.underlyingPrice).toFixed(4) + ' ETH'}</td>
-                                                        </tr>
-
-                                                    </tbody>
-                                                </table>
-                                            </div>)
-                                        }
-                                    </div>
-                                </div>
-                                <div className="highlight-column">
-                                    <h6>Pair</h6>
-                                    <Link to="/pair" state={{ supply: this.state.highestYield, borrow: this.state.lowestBorrowRate }}>
-                                        <div className="highlight-inner clickable">
+                    <MediaQuery query="(min-device-width: 1024px)">
+                        <div className="row-container">
+                            <div></div>
+                            <div className="highlight">
+                                <h5>Current Maximum Rate Yields</h5>
+                                <div className="row-container">
+                                    <div className="highlight-column">
+                                        <h6>Outright</h6>
+                                        <div className="highlight-inner">
                                             {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
                                                 (<div>
                                                     <div className="pair-header">
-                                                        <div style={{ width: '33%' }}>
+                                                        <div>
                                                             <img className="token-logo" src={this.state.highestYield.logo} />
                                                             <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
-                                                        </div>
-                                                        <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
-                                                        <div style={{ width: '33%' }}>
-                                                            <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
-                                                            <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
                                                         </div>
                                                     </div>
                                                     <table>
                                                         <tbody>
                                                             <tr>
-                                                                <td className="table-label-column">Net Supply Rate</td>
-                                                                <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
+                                                                <td className="table-label-column">Supply Rate</td>
+                                                                <td style={{ textAlign: 'center' }}>{(this.state.highestYield.supplyRate * 100).toFixed(2) + '%'}</td>
                                                             </tr>
                                                             <tr>
-                                                                <td className="table-label-column">Volatility</td>
-                                                                <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
+                                                                <td className="table-label-column">Collateral Factor</td>
+                                                                <td style={{ textAlign: 'center' }}>{(this.state.highestYield.collateralFactor * 100).toFixed(2) + '%'}</td>
                                                             </tr>
                                                             <tr>
-                                                                <td className="table-label-column">Price Ratio</td>
-                                                                <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
+                                                                <td className="table-label-column">Underlying Price</td>
+                                                                <td style={{ textAlign: 'center' }}>{parseFloat(this.state.highestYield.underlyingPrice).toFixed(4) + ' ETH'}</td>
                                                             </tr>
 
                                                         </tbody>
@@ -107,57 +71,225 @@ class Rates extends React.Component {
                                                 </div>)
                                             }
                                         </div>
-                                    </Link>
+                                    </div>
+                                    <div className="highlight-column">
+                                        <h6>Pair</h6>
+                                        <Link to="/pair" state={{ supply: this.state.highestYield, borrow: this.state.lowestBorrowRate }}>
+                                            <div className="highlight-inner clickable">
+                                                {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
+                                                    (<div>
+                                                        <div className="pair-header">
+                                                            <div style={{ width: '33%' }}>
+                                                                <img className="token-logo" src={this.state.highestYield.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                                            </div>
+                                                            <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
+                                                            <div style={{ width: '33%' }}>
+                                                                <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
+                                                            </div>
+                                                        </div>
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td className="table-label-column">Net Supply Rate</td>
+                                                                    <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="table-label-column">Volatility</td>
+                                                                    <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="table-label-column">Price Ratio</td>
+                                                                    <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>)
+                                                }
+                                            </div>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
+                            <div></div>
                         </div>
-                        <div></div>
-                    </div>
+                    </MediaQuery>
+                    <MediaQuery query="(max-device-width: 1024px)">
+                        <div className="row-container-mobile">
+                            <div></div>
+                            <div className="highlight-mobile">
+                                <h5>Current Maximum Rate Yields</h5>
+                                <div className="row-container-mobile">
+                                    <div className="highlight-column-mobile">
+                                        <h6>Outright</h6>
+                                        <div className="highlight-inner-mobile">
+                                            {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
+                                                (<div>
+                                                    <div className="pair-header">
+                                                        <div>
+                                                            <img className="token-logo" src={this.state.highestYield.logo} />
+                                                            <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                                        </div>
+                                                    </div>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td className="table-label-column">Supply Rate</td>
+                                                                <td style={{ textAlign: 'center' }}>{(this.state.highestYield.supplyRate * 100).toFixed(2) + '%'}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className="table-label-column">Collateral Factor</td>
+                                                                <td style={{ textAlign: 'center' }}>{(this.state.highestYield.collateralFactor * 100).toFixed(2) + '%'}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className="table-label-column">Underlying Price</td>
+                                                                <td style={{ textAlign: 'center' }}>{parseFloat(this.state.highestYield.underlyingPrice).toFixed(4) + ' ETH'}</td>
+                                                            </tr>
 
-                    <div className="row-container">
-                        <div className="rate-table">
-                            <h5>Supply Markets</h5>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Asset</th>
-                                        <th onClick={this.sortSupplyByApy.bind(this)} className='sortable'>APY</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        this.state.rates.map((item) => (
-                                            <tr key={item.asset}>
-                                                <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
-                                                <td>{this.state.ratesLoading ? <div class="lds-ring"><div></div><div></div><div></div></div> : (item.supplyRate * 100).toFixed(2) + '%'}</td>
-                                            </tr>
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
+                                                        </tbody>
+                                                    </table>
+                                                </div>)
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="highlight-column-mobile">
+                                        <h6>Pair</h6>
+                                        <Link to="/pair" state={{ supply: this.state.highestYield, borrow: this.state.lowestBorrowRate }}>
+                                            <div className="highlight-inner-mobile clickable">
+                                                {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
+                                                    (<div>
+                                                        <div className="pair-header">
+                                                            <div style={{ width: '33%' }}>
+                                                                <img className="token-logo" src={this.state.highestYield.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                                            </div>
+                                                            <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
+                                                            <div style={{ width: '33%' }}>
+                                                                <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
+                                                            </div>
+                                                        </div>
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td className="table-label-column">Net Supply Rate</td>
+                                                                    <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="table-label-column">Volatility</td>
+                                                                    <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="table-label-column">Price Ratio</td>
+                                                                    <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>)
+                                                }
+                                            </div>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
                         </div>
-                        <div className="rate-table">
-                            <h5>Borrow Markets</h5>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Asset</th>
-                                        <th onClick={this.sortBorrowByApy.bind(this)} className='sortable'>APY</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        this.state.rates.map((item) => (
-                                            <tr key={item.asset}>
-                                                <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
-                                                <td>{this.state.ratesLoading ? <div class="lds-ring"><div></div><div></div><div></div></div> : (item.borrowRate * 100).toFixed(2) + '%'}</td>
-                                            </tr>
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
+                    </MediaQuery>
+                    <MediaQuery query="(max-device-width: 1024px)">
+                        <div className="row-container-mobile">
+                            <div className="rate-table-mobile">
+                                <h5>Supply Markets</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th onClick={this.sortSupplyByApy.bind(this)} className='sortable'>APY</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            this.state.rates.map((item) => (
+                                                <tr key={item.asset} className="mobile">
+                                                    <td className="token-name-mobile"><img className="token-logo-mobile" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.underlyingSymbol}</div></td>
+                                                    <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.supplyRate * 100).toFixed(2) + '%'}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="rate-table-mobile">
+                                <h5>Borrow Markets</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th onClick={this.sortBorrowByApy.bind(this)} className='sortable'>APY</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            this.state.rates.map((item) => (
+                                                <tr key={item.asset} className="mobile">
+                                                    <td className="token-name-mobile"><img className="token-logo-mobile" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.underlyingSymbol}</div></td>
+                                                    <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.borrowRate * 100).toFixed(2) + '%'}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    </MediaQuery>
+                    <MediaQuery query="(min-device-width: 1024px)">
+                        <div className="row-container">
+                            <div className="rate-table">
+                                <h5>Supply Markets</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th onClick={this.sortSupplyByApy.bind(this)} className='sortable'>APY</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            this.state.rates.map((item) => (
+                                                <tr key={item.asset}>
+                                                    <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
+                                                    <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.supplyRate * 100).toFixed(2) + '%'}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="rate-table">
+                                <h5>Borrow Markets</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th onClick={this.sortBorrowByApy.bind(this)} className='sortable'>APY</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            this.state.rates.map((item) => (
+                                                <tr key={item.asset}>
+                                                    <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
+                                                    <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.borrowRate * 100).toFixed(2) + '%'}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </MediaQuery>
 
                 </div>
             </Layout>
@@ -169,7 +301,7 @@ class Rates extends React.Component {
             <div style={{ height: '100%' }}>
                 <div style={{ height: '33%' }}></div>
                 <div>
-                    <div style={{ width: '33%' }}></div><div class="lds-ring"><div></div><div></div><div></div></div><div style={{ width: '33%' }}></div>
+                    <div style={{ width: '33%' }}></div><div className="lds-ring"><div></div><div></div><div></div></div><div style={{ width: '33%' }}></div>
                 </div>
                 <div style={{ height: '33%' }}></div>
             </div>
@@ -199,7 +331,7 @@ class Rates extends React.Component {
         this.setState({
             ratesLoading: true
         });
-        axios.get(`http://localhost:3001/supplyRates`).then(res => {
+        axios.get(`http://192.168.1.252:3001/supplyRates`).then(res => {
             if (res.data && res.data.length > 0) {
                 var logoRates = this.mapLogos(res.data);
                 this.setState({
@@ -243,7 +375,7 @@ class Rates extends React.Component {
     }
 
     calculateBorrowVolatility() {
-        axios.get(`http://localhost:3001/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
+        axios.get(`http://192.168.1.252:3001/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
             var lowest = this.state.lowestBorrowRate;
             lowest.volatility = res.data;
             this.setState({
