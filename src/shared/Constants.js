@@ -21,6 +21,8 @@ export const BORROW = 'borrow';
 export const ASC = 'ASC';
 export const DESC = 'DESC';
 
+export const API_URL = 'http://farmr-server.vercel.app';
+
 export const logo_map = [
 
     { cName: "cAAVE", asset: 'Aave Token', logo: AAVELogo },

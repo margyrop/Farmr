@@ -1,7 +1,7 @@
 import React from "react";
 import MediaQuery from "react-responsive";
 import axios from "axios";
-import { logo_map } from '../shared/Constants';
+import { logo_map, API_URL } from '../shared/Constants';
 import Layout from '../shared/Layout';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -331,7 +331,7 @@ class Rates extends React.Component {
         this.setState({
             ratesLoading: true
         });
-        axios.get(`http://192.168.1.252:3001/supplyRates`).then(res => {
+        axios.get(`${API_URL}/supplyRates`).then(res => {
             if (res.data && res.data.length > 0) {
                 var logoRates = this.mapLogos(res.data);
                 this.setState({
@@ -375,7 +375,7 @@ class Rates extends React.Component {
     }
 
     calculateBorrowVolatility() {
-        axios.get(`http://192.168.1.252:3001/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
+        axios.get(`${API_URL}/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
             var lowest = this.state.lowestBorrowRate;
             lowest.volatility = res.data;
             this.setState({
