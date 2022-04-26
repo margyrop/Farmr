@@ -25,7 +25,7 @@ class Rates extends React.Component {
     componentDidMount() {
         this.getRates();
         this.setState({
-            autoRefreshData: setInterval(this.getRates.bind(this), 1000000)
+            autoRefreshData: setInterval(this.getRates.bind(this), 30000)
         })
     }
 
