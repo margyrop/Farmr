@@ -92,8 +92,8 @@ class Rates extends React.Component {
                                                             <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="table-label-column">Volitility</td>
-                                                            <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volitility === 0 ? '-' : (this.state.lowestBorrowRate.volitility * 100).toFixed(2) + '%'}</td>
+                                                            <td className="table-label-column">Volatility</td>
+                                                            <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
                                                         </tr>
                                                         <tr>
                                                             <td className="table-label-column">Price Ratio</td>
@@ -237,13 +237,13 @@ class Rates extends React.Component {
         this.setState({
             highestYield: supplyRates[0],
             lowestBorrowRate: borrowRates[0],
-        }, this.calculateBorrowVolitility);
+        }, this.calculateBorrowvolatility);
     }
 
-    calculateBorrowVolitility() {
-        axios.get(`http://localhost:3001/volitility/${this.state.lowestBorrowRate.cName}`).then((res) => {
+    calculateBorrowvolatility() {
+        axios.get(`http://localhost:3001/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
             console.log(res.data);
-            this.state.lowestBorrowRate.volitility = res.data;
+            this.state.lowestBorrowRate.volatility = res.data;
             this.setState({
                 lowestBorrowRate: { ...this.state.lowestBorrowRate }
             });
