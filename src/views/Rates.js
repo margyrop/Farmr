@@ -17,7 +17,9 @@ class Rates extends React.Component {
         this.state = {
             rates: logo_map,
             sortApy: "",
-            sortAsset: ""
+            sortAsset: "",
+            selectedSupply: {},
+            selectedBorrow: {}
         };
 
     }
@@ -38,7 +40,7 @@ class Rates extends React.Component {
                         <div className="row-container">
                             <div></div>
                             <div className="highlight">
-                                <h5>Current Maximum Rate Yields</h5>
+                                <h5>{`Current ${this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? 'Selected ' : 'Maximum'} Rate Yields`}</h5>
                                 <div className="row-container">
                                     <div className="highlight-column">
                                         <h6>Outright</h6>
@@ -74,34 +76,34 @@ class Rates extends React.Component {
                                     </div>
                                     <div className="highlight-column">
                                         <h6>Pair</h6>
-                                        <Link to="/pair" state={{ supply: this.state.highestYield, borrow: this.state.lowestBorrowRate }}>
+                                        <Link to={this.state.ratesLoading || !this.state.highestYield ? '' : '/pair'} state={{ supply: this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedSupply : this.state.highestYield, borrow: this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedBorrow : this.state.lowestBorrowRate }}>
                                             <div className="highlight-inner clickable">
                                                 {this.state.ratesLoading || !this.state.highestYield ? this.highlightLoading() :
                                                     (<div>
                                                         <div className="pair-header">
                                                             <div style={{ width: '33%' }}>
-                                                                <img className="token-logo" src={this.state.highestYield.logo} />
-                                                                <h6 className="highlight-item-header">{this.state.highestYield.asset}</h6>
+                                                                <img className="token-logo" src={this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedSupply.logo : this.state.highestYield.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedSupply.asset : this.state.highestYield.asset}</h6>
                                                             </div>
                                                             <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
                                                             <div style={{ width: '33%' }}>
-                                                                <img className="token-logo" src={this.state.lowestBorrowRate.logo} />
-                                                                <h6 className="highlight-item-header">{this.state.lowestBorrowRate.asset}</h6>
+                                                                <img className="token-logo" src={this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedBorrow.logo : this.state.lowestBorrowRate.logo} />
+                                                                <h6 className="highlight-item-header">{this.state.selectedBorrow.asset && this.state.selectedSupply.asset ? this.state.selectedBorrow.asset : this.state.lowestBorrowRate.asset}</h6>
                                                             </div>
                                                         </div>
                                                         <table>
                                                             <tbody>
                                                                 <tr>
                                                                     <td className="table-label-column">Net Supply Rate</td>
-                                                                    <td style={{ textAlign: 'center' }}>{((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%'}</td>
+                                                                    <td style={{ textAlign: 'center' }}>{this.getNetSupplyRate()}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className="table-label-column">Volatility</td>
-                                                                    <td style={{ textAlign: 'center' }}>{this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%'}</td>
+                                                                    <td style={{ textAlign: 'center' }}>{this.getVolitility()}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className="table-label-column">Price Ratio</td>
-                                                                    <td style={{ textAlign: 'center' }}>{'1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2)}</td>
+                                                                    <td style={{ textAlign: 'center' }}>{this.getPriceRatio()}</td>
                                                                 </tr>
 
                                                             </tbody>
@@ -212,7 +214,7 @@ class Rates extends React.Component {
                                     <tbody>
                                         {
                                             this.state.rates.map((item) => (
-                                                <tr key={item.asset} className="mobile">
+                                                <tr key={item.asset} className={`mobile asset-row ${this.state.selectedSupply.asset === item.asset ? 'selected' : ''}`} onClick={this.selectSupply.bind(this, item)}>
                                                     <td className="token-name-mobile"><img className="token-logo-mobile" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.underlyingSymbol}</div></td>
                                                     <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.supplyRate * 100).toFixed(2) + '%'}</td>
                                                 </tr>
@@ -233,7 +235,7 @@ class Rates extends React.Component {
                                     <tbody>
                                         {
                                             this.state.rates.map((item) => (
-                                                <tr key={item.asset} className="mobile">
+                                                <tr key={item.asset} className={`mobile asset-row ${this.state.selectedBorrow.asset === item.asset ? 'selected' : ''}`} onClick={this.selectBorrow.bind(this, item)}>
                                                     <td className="token-name-mobile"><img className="token-logo-mobile" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.underlyingSymbol}</div></td>
                                                     <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.borrowRate * 100).toFixed(2) + '%'}</td>
                                                 </tr>
@@ -258,7 +260,7 @@ class Rates extends React.Component {
                                     <tbody>
                                         {
                                             this.state.rates.map((item) => (
-                                                <tr key={item.asset}>
+                                                <tr key={item.asset} className={`asset-row ${this.state.selectedSupply.asset === item.asset ? 'selected' : ''}`} onClick={this.selectSupply.bind(this, item)}>
                                                     <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
                                                     <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.supplyRate * 100).toFixed(2) + '%'}</td>
                                                 </tr>
@@ -279,7 +281,7 @@ class Rates extends React.Component {
                                     <tbody>
                                         {
                                             this.state.rates.map((item) => (
-                                                <tr key={item.asset}>
+                                                <tr key={item.asset} className={`asset-row ${this.state.selectedBorrow.asset === item.asset ? 'selected' : ''}`} onClick={this.selectBorrow.bind(this, item)}>
                                                     <td className="token-name"><img className="token-logo" src={item.logo}></img><div style={{ marginLeft: '10px' }}>{item.asset}</div></td>
                                                     <td>{this.state.ratesLoading ? <div className="lds-ring"><div></div><div></div><div></div></div> : (item.borrowRate * 100).toFixed(2) + '%'}</td>
                                                 </tr>
@@ -294,6 +296,35 @@ class Rates extends React.Component {
                 </div>
             </Layout>
         );
+    }
+
+    getNetSupplyRate() {
+        if (this.state.selectedBorrow.asset && this.state.selectedSupply.asset) {
+            return ((this.state.selectedSupply.supplyRate - this.state.selectedBorrow.borrowRate) * 100).toFixed(2) + '%'
+        }
+        return ((this.state.highestYield.supplyRate - this.state.lowestBorrowRate.borrowRate) * 100).toFixed(2) + '%';
+    }
+
+    getVolitility() {
+        if (this.state.selectedBorrow.asset && this.state.selectedSupply.asset) {
+            return this.state.selectedBorrow.volatility === 0 ? '-' : (this.state.selectedBorrow.volatility * 100).toFixed(2) + '%';
+        }
+        return this.state.lowestBorrowRate.volatility === 0 ? '-' : (this.state.lowestBorrowRate.volatility * 100).toFixed(2) + '%';
+    }
+
+    getPriceRatio() {
+        if (this.state.selectedBorrow.asset && this.state.selectedSupply.asset) {
+            return '1:' + parseFloat(this.state.selectedSupply.underlyingPrice / this.state.selectedBorrow.underlyingPrice).toFixed(2);
+        }
+        return '1:' + parseFloat(this.state.highestYield.underlyingPrice / this.state.lowestBorrowRate.underlyingPrice).toFixed(2);
+    }
+
+    selectSupply(asset) {
+        this.setState({ selectedSupply: asset.asset === this.state.selectedSupply.asset ? {} : asset })
+    }
+
+    selectBorrow(asset) {
+        this.setState({ selectedBorrow: asset.asset === this.state.selectedBorrow.asset ? {} : asset })
     }
 
     highlightLoading() {
@@ -364,22 +395,20 @@ class Rates extends React.Component {
     }
 
     calculateBestYields(rates) {
-        var supplyRates = [...rates];
-        supplyRates.sort((a, b) => b.supplyRate - a.supplyRate);
-        var borrowRates = [...rates];
-        borrowRates.sort((a, b) => a.borrowRate - b.borrowRate);
-        this.setState({
-            highestYield: supplyRates[0],
-            lowestBorrowRate: borrowRates[0],
-        }, this.calculateBorrowVolatility);
+        this.calculateBorrowVolatility(rates);
+
     }
 
-    calculateBorrowVolatility() {
-        axios.get(`${API_URL}/volatility/${this.state.lowestBorrowRate.cName}`).then((res) => {
-            var lowest = this.state.lowestBorrowRate;
-            lowest.volatility = res.data;
+    calculateBorrowVolatility(rates) {
+        axios.post(`${API_URL}/volatility`, { rates: rates }).then((res) => {
+            var supplyRates = [...res.data];
+            supplyRates.sort((a, b) => b.supplyRate - a.supplyRate);
+            var borrowRates = [...res.data];
+            borrowRates.sort((a, b) => a.borrowRate - b.borrowRate);
             this.setState({
-                lowestBorrowRate: { ...lowest }
+                highestYield: supplyRates[0],
+                lowestBorrowRate: borrowRates[0],
+                rates: res.data
             });
         });
     }

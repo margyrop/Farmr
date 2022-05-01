@@ -134,6 +134,18 @@
   padding: 10px;
 }
 
+.asset-row:hover {
+  background-color: rgb(230, 230, 230);
+  cursor: pointer;
+}
+
+.selected {
+  background-color: rgb(175, 175, 175);
+}
+.selected:hover {
+  background-color: rgb(175, 175, 175);
+}
+
 .spaced {
   width: 45%;
 }

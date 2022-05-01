@@ -25,6 +25,7 @@ const CoinPair = () => {
     const [borrowedOwed, setBorrowedOwed] = useState();
     const [ethPrice, setEthPrice] = useState();
     const [risk, setRisk] = useState();
+
     const previous = useRef();
     useEffect(() => {
         async function fetchEth(fiat) {
@@ -249,12 +250,12 @@ const CoinPair = () => {
         setSupplyAmount(e.target.value);
         const initial = e.target.value * supply.underlyingPrice * ethPrice;
         setInitialInvestment(initial);
-        setBorrowAmount(parseFloat(borrow.underlyingPrice / supply.underlyingPrice) * e.target.value);
+        setBorrowAmount(parseFloat(supply.underlyingPrice / borrow.underlyingPrice) * e.target.value);
     }
 
     function borrowAmountChanged(e) {
         setBorrowAmount(e.target.value);
-        setSupplyAmount(parseFloat(supply.underlyingPrice / borrow.underlyingPrice) * e.target.value);
+        setSupplyAmount(parseFloat(borrow.underlyingPrice / supply.underlyingPrice) * e.target.value);
     }
 
     function numberOfLeveragesChanged(e) {
@@ -288,7 +289,7 @@ const CoinPair = () => {
     function calculateRisk() {
         // Function will be on a scale from 1 to 100
         // Need to incorperate volitilty, number of leverages, and borrow APY
-        var risk = (borrow.volatility * 1000) + Math.pow(numberOfLeverages, 2) + Math.pow(borrow.borrowRate * 1000, 1.2);
+        var risk = (borrow.volatility * 1000) + Math.pow(numberOfLeverages, 2) + Math.pow(borrow.borrowRate * 100, 1.2);
         setRisk(supplyAmount > 0 ? risk : 0);
     }
 
