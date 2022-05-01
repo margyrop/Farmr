@@ -9,19 +9,20 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate
 } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <BrowserRouter>
-        <Routes>
-            
-                <Route path="rates" element={<Rates />} />
-                <Route path="app" element={<App/>} />
-                <Route path="pair" element={<CoinPair supply borrow/>} />
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to="/rates" />} />
+      <Route path="rates" element={<Rates />} />
+      <Route path="app" element={<App />} />
+      <Route path="pair" element={<CoinPair supply borrow />} />
 
-        </Routes>
-    </BrowserRouter>,
+    </Routes>
+  </BrowserRouter>,
 );
 
 // If you want to start measuring performance in your app, pass a function

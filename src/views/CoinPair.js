@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { getEthForCurrency } from "../shared/CommonFunctions";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 
 const CoinPair = () => {
@@ -22,6 +24,7 @@ const CoinPair = () => {
     const [totalGain, setTotalGain] = useState();
     const [borrowedOwed, setBorrowedOwed] = useState();
     const [ethPrice, setEthPrice] = useState();
+    const [risk, setRisk] = useState();
     const previous = useRef();
     useEffect(() => {
         async function fetchEth(fiat) {
@@ -66,11 +69,11 @@ const CoinPair = () => {
                                     </table>
                                     <div className="row">
                                         <label>Amount {supply.asset}</label>
-                                        <input type="number" onChange={supplyAmountChanged} value={supplyAmount}></input>
+                                        <input type="number"  min="0" onChange={supplyAmountChanged} value={supplyAmount}></input>
                                     </div>
                                     <div className="row">
                                         <label>Number of Leverages</label>
-                                        <input type="number" onChange={numberOfLeveragesChanged} value={numberOfLeverages}></input>
+                                        <input type="number"  min="0" onChange={numberOfLeveragesChanged} value={numberOfLeverages}></input>
                                     </div>
                                     <table>
                                         <tbody>
@@ -98,7 +101,16 @@ const CoinPair = () => {
                                     </table>
 
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', height: `100%` }}><FontAwesomeIcon icon={faRepeat} /></div>
+                                <div style={{ display: 'flex', alignItems: 'center', height: '100%', flexDirection: 'column', justifyContent: 'center' }}>
+                                    <div>Risk</div>
+                                    <div style={{ maxWidth: '115px' }}><CircularProgressbar value={risk} text={getRiskText()} styles={buildStyles({
+                                        textSize: '16px',
+                                        pathTransitionDuration: 0.5,
+                                        // Colors
+                                        pathColor: `${getRiskColor()}`,
+                                        textColor: `${getRiskColor()}`
+                                    })} /></div>
+                                </div>
                                 <div className="highlight-inner spaced">
                                     <img className="token-logo" src={borrow.logo}></img>
                                     <h6 className="highlight-item-header">{borrow.asset}</h6>
@@ -190,6 +202,14 @@ const CoinPair = () => {
                                     </table>
 
                                 </div>
+                                <div>Risk</div>
+                                    <div style={{ maxWidth: '115px' }}><CircularProgressbar value={risk} text={getRiskText()} styles={buildStyles({
+                                        textSize: '16px',
+                                        pathTransitionDuration: 0.5,
+                                        // Colors
+                                        pathColor: `${getRiskColor()}`,
+                                        textColor: `${getRiskColor()}`
+                                    })} /></div>
                                 <div className="highlight-inner-mobile spaced-mobile">
                                     <img className="token-logo-mobile" src={borrow.logo}></img>
                                     <h6 className="highlight-item-header">{borrow.asset}</h6>
@@ -239,7 +259,6 @@ const CoinPair = () => {
 
     function numberOfLeveragesChanged(e) {
         setNumberOfLeverages(e.target.value);
-
     }
 
     function compoundFarming() {
@@ -263,6 +282,38 @@ const CoinPair = () => {
         setTotalGain(realizedGain);
         setInterestOwed(interestOwed);
         setBorrowedOwed(totalOwed);
+        calculateRisk();
+    }
+
+    function calculateRisk() {
+        // Function will be on a scale from 1 to 100
+        // Need to incorperate volitilty, number of leverages, and borrow APY
+        var risk = (borrow.volatility * 1000) + Math.pow(numberOfLeverages, 2) + Math.pow(borrow.borrowRate * 1000, 1.2);
+        setRisk(supplyAmount > 0 ? risk : 0);
+    }
+
+    function getRiskText() {
+        if (!risk) {
+            return '-';
+        }
+        if (risk < 33) {
+            return 'Low';
+        } else if (risk < 66) {
+            return 'Moderate';
+        }
+        return 'High';
+    }
+
+    function getRiskColor() {
+        if (!risk) {
+            return '#2ebf58';
+        }
+        if (risk < 33) {
+            return '#2ebf58';
+        } else if (risk < 66) {
+            return '#b5b552';
+        }
+        return '#e12f2f';
     }
 
 }
